@@ -119,10 +119,8 @@ def score_tags(target, given):
         wrong_order_factor = ((mn ** 2) - 1) / (mn ** 2)
         target_to_following = {t: target[target.index(t) + 1 :] for t in target[:-1]}
 
-        # ABDC should be greater than CDAB, etc --- DCBA
         for i in range(mn - 1):
             t = matched_tags[i]
-            t_next = matched_tags[i + 1]
             t_following = matched_tags[i + 1 :]
             if t not in target_to_following:
                 scalar_3 *= wrong_order_factor ** (mn - i - 1)
