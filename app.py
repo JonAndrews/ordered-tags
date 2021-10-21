@@ -18,7 +18,7 @@ def random_generation_example(num=10000, show=50):
     projects.sort(key=lambda p: p["score"], reverse=True)
 
     for project in projects[:show]:
-        if project['score'] <= 0:
+        if project["score"] <= 0:
             break
         print(f"{project['id']}\t{round(project['score'], 4)}\t{project['tags']}")
 
@@ -28,7 +28,7 @@ def random_generation_example(num=10000, show=50):
 def subset_permutations_example():
     "Running Subset Permutations Example"
 
-    target = ['A', 'B', 'C', 'D']
+    target = ["A", "B", "C", "D"]
     print(f"Example target tags are {target}.")
 
     subsets = generate_subset_permutations(target)
@@ -42,7 +42,7 @@ def subset_permutations_example():
     projects.sort(key=lambda p: p["score"], reverse=True)
 
     for project in projects:
-        if project['score'] <= 0:
+        if project["score"] <= 0:
             break
         print(f"{round(project['score'], 4)}\t{project['tags']}")
 
@@ -67,14 +67,14 @@ def generate_subset_permutations(target):
     n = len(target)
     subsets = []
     for i in range(n):
-        subsets.extend(list(itertools.combinations(target, i+1)))
+        subsets.extend(list(itertools.permutations(target, i + 1)))
     return subsets
 
 
 def value_tags(tags):
     n = len(tags)
-    s = (n*(n+1))/2
-    return [(n-g)/s for g in range(n)]
+    s = (n * (n + 1)) / 2
+    return [(n - g) / s for g in range(n)]
 
 
 def score_tags(target, given):
@@ -116,18 +116,24 @@ def score_tags(target, given):
     matched_tags = [g for g in given if g in target]
     mn = len(matched_tags)
     if mn > 1:
-        wrong_order_factor = ((mn**2)-1)/(mn**2)
-        target_to_following = {t: target[target.index(t)+1:] for t in target[:-1]}
+        wrong_order_factor = ((mn ** 2) - 1) / (mn ** 2)
+        target_to_following = {t: target[target.index(t) + 1 :] for t in target[:-1]}
 
+        # ABDC should be greater than CDAB, etc --- DCBA
         for i in range(mn - 1):
             t = matched_tags[i]
-            t_next = matched_tags[i+1]
-            if t not in target_to_following or t_next not in target_to_following[t]:
-                scalar_3 *= wrong_order_factor
+            t_next = matched_tags[i + 1]
+            t_following = matched_tags[i + 1 :]
+            if t not in target_to_following:
+                scalar_3 *= wrong_order_factor ** (mn - i - 1)
+            else:
+                for f in t_following:
+                    if f not in target_to_following[t]:
+                        scalar_3 *= wrong_order_factor
 
     return scalar_1 * scalar_2 * scalar_3
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     random_generation_example()
     subset_permutations_example()
